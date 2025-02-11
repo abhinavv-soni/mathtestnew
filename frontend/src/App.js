@@ -21,6 +21,20 @@ function App() {
     }
   }, []);
 
+  // Calculate answer safely without eval
+  const calculateAnswer = (num1, num2, operation) => {
+    switch (operation) {
+      case '+':
+        return num1 + num2;
+      case '-':
+        return num1 - num2;
+      case '*':
+        return num1 * num2;
+      default:
+        return 0;
+    }
+  };
+
   // Generate a random arithmetic question
   const generateQuestion = () => {
     const operations = ['+', '-', '*'];
@@ -45,9 +59,10 @@ function App() {
         num2 = Math.floor(Math.random() * 100);
     }
 
+    const answer = calculateAnswer(num1, num2, operation);
     return {
       question: `${num1} ${operation} ${num2}`,
-      answer: eval(`${num1} ${operation} ${num2}`)
+      answer: answer
     };
   };
 
@@ -101,9 +116,10 @@ function App() {
       updateHighScores(score);
     }
     return () => clearInterval(timer);
-  }, [timeLeft, gameActive]);
+  }, [timeLeft, gameActive, score, updateHighScores]);
 
   return (
+    // Rest of the JSX remains unchanged
     <div className="min-h-screen bg-gradient-to-br from-primary-600 to-secondary-600 py-12 px-4 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden">
