@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, Trophy, Brain, ArrowRight, CheckCircle2, XCircle } from 'lucide-react';
 import './App.css';
@@ -94,14 +94,16 @@ function App() {
     setUserAnswer('');
   };
 
-  // Update high scores
-  const updateHighScores = (finalScore) => {
-    const newHighScores = [...highScores, finalScore]
-      .sort((a, b) => b - a)
-      .slice(0, 5);
-    setHighScores(newHighScores);
-    localStorage.setItem('highScores', JSON.stringify(newHighScores));
-  };
+  // Update high scores - memoized with useCallback
+  const updateHighScores = useCallback((finalScore) => {
+    setHighScores(prevHighScores => {
+      const newHighScores = [...prevHighScores, finalScore]
+        .sort((a, b) => b - a)
+        .slice(0, 5);
+      localStorage.setItem('highScores', JSON.stringify(newHighScores));
+      return newHighScores;
+    });
+  }, []);
 
   // Timer effect
   useEffect(() => {
